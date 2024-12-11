@@ -1,0 +1,72 @@
+import datetime
+import socket
+import os
+from netmiko import ConnectHandler
+import requests
+
+def menu():
+    print("Menu")
+    print("1 - Show time and date")
+    print("2 - Show IP address")
+    print("3 - Show home directory")
+    print("4 - Backup a file remotely via SSH")
+    print("5 - Save web page")
+    print("Q - Quit")
+
+def show_date_time():
+    now = datetime.datetime.now()
+    print("Current Date and Time:", now)
+
+def show_ip_address():
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+    print("Local IP Address:", ip_address)
+
+def list_home_directory():
+    homedirectory = remoteconncection.send_command("ls")
+    print(homedirectory)
+
+remoteconncection = ConnectHandler(
+    device_type="",
+    ip="",
+    username="",
+    password="",
+    secret="",
+    port=""
+)
+
+def backupfile():
+    userinput = input("Path to file: ")
+    filebackup = remoteconncection.send_command("cp", " ", userinput, userinput, ".old")
+    print(filebackup)
+
+def savewebpage():
+    url = input("Enter the URL of the webpage: ")
+    response = requests.get(url)
+    filename = "saved_page.html"
+    with open(filename, "w") as file:
+        file.write(response.text)
+    print(f"Webpage saved as {filename}")
+\
+def main():
+    while True:
+        menu()
+        choice = input("Enter your choice: ").strip().upper()
+        if choice == "1":
+            show_date_time()
+        elif choice == "2":
+            show_ip_address()
+        elif choice == "3":
+            list_home_directory()
+        elif choice == "4":
+            backupfile()
+        elif choice == "5":
+            savewebpage()
+        elif choice == "Q":
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
