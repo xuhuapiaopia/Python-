@@ -4,6 +4,17 @@ import os
 from netmiko import ConnectHandler
 import requests
 
+def sshconnection():
+    remoteconnection=ConnectHandler(
+        device_type="",
+        ip="",
+        username="",
+        password="",
+        secret="",
+        port=""
+    )
+    return remoteconnection
+
 def menu():
     print("Menu")
     print("1 - Show time and date")
@@ -18,27 +29,33 @@ def show_date_time():
     print("Current Date and Time:", now)
 
 def show_ip_address():
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    print("Local IP Address:", ip_address)
+    try:
+        sshconnection()
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        print("Local IP Address:", ip_address)
+    except Exception as e:
+        print ("there was error connecting to the virtual machine")
+        main()
+
 
 def list_home_directory():
-    homedirectory = remoteconncection.send_command("ls")
-    print(homedirectory)
-
-remoteconncection = ConnectHandler(
-    device_type="",
-    ip="",
-    username="",
-    password="",
-    secret="",
-    port=""
-)
+    try:
+        remoteconnection=sshconnection()
+        homedirectory = remoteconnection.send_command("ls")
+        print(homedirectory)
+    except Exception as e:
+        main()
 
 def backupfile():
-    userinput = input("Path to file: ")
-    filebackup = remoteconncection.send_command("cp", " ", userinput, userinput, ".old")
-    print(filebackup)
+    try:
+        remoteconnection=sshconnection()
+        userinput = input("Path to file: ")
+        filebackup=remoteconnection.send_command(f"cp {userinput} {userinput}.old")
+        print(filebackup)
+    except Exception as e:
+        main()
+
 
 def savewebpage():
     url = input("Enter the URL of the webpage: ")
@@ -47,7 +64,7 @@ def savewebpage():
     with open(filename, "w") as file:
         file.write(response.text)
     print(f"Webpage saved as {filename}")
-\
+
 def main():
     while True:
         menu()
@@ -70,3 +87,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
